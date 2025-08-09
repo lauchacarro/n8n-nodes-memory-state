@@ -1,7 +1,7 @@
 {
-  "name": "n8n-nodes-concurrent-in-memory-kv",
+  "name": "n8n-nodes-memory-state",
   "version": "1.0.0",
-  "description": "In-Memory Key-Value store node for n8n",
+  "description": "Memory State store node for n8n",
   "keywords": [
     "n8n-community-node-package"
   ],
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lauchacarro/n8n-nodes-concurrent-in-memory-kv.git"
+    "url": "https://github.com/lauchacarro/n8n-nodes-memory-state.git"
   },
   "engines": {
     "node": ">=20.15"
@@ -35,7 +35,7 @@
     "n8nNodesApiVersion": 1,
     "credentials": [],
     "nodes": [
-      "dist/nodes/InMemoryKV/InMemoryKV.node.js"
+      "dist/nodes/MemoryState/MemoryState.node.js"
     ]
   },
   "devDependencies": {

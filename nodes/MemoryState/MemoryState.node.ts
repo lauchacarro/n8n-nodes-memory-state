@@ -10,17 +10,17 @@ import {
 
 import { memoryStore } from '../../src/MemoryStore';
 
-export class InMemoryKv implements INodeType {
+export class MemoryState implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'In-Memory KV',
-		name: 'inMemoryKv',
-		icon: 'file:inmemory.svg',
+		displayName: 'Memory State',
+		name: 'memoryState',
+		icon: 'file:memorystate.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["action"] + ": " + $parameter["key"]}}',
-		description: 'Store and retrieve key-value pairs in memory',
+		description: 'Store and retrieve key-value pairs in memory state',
 		defaults: {
-			name: 'In-Memory KV',
+			name: 'Memory State',
 		},
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
@@ -297,7 +297,7 @@ export class InMemoryKv implements INodeType {
 				// Wrap other errors in NodeOperationError
 				throw new NodeOperationError(
 					this.getNode(),
-					`Error executing In-Memory KV operation: ${error instanceof Error ? error.message : 'Unknown error'}`,
+					`Error executing Memory State operation: ${error instanceof Error ? error.message : 'Unknown error'}`,
 					{ itemIndex: i },
 				);
 			}

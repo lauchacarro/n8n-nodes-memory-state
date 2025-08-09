@@ -1,6 +1,6 @@
-# In-Memory Key-Value Store Node for n8n
+# Memory State Node for n8n
 
-Un nodo personalizado para n8n que proporciona funcionalidad de almacenamiento clave-valor en memoria RAM con concurrencia segura.
+Un nodo personalizado para n8n que proporciona funcionalidad de almacenamiento de estado en memoria RAM con concurrencia segura.
 
 ## Características
 
@@ -20,7 +20,7 @@ npm pack
 
 # Instalar en tu instalación de n8n
 cd /ruta/a/tu/instalacion/n8n
-npm install /ruta/completa/al/n8n-nodes-in-memory-kv-1.0.0.tgz
+npm install /ruta/completa/al/n8n-nodes-memory-state-1.0.0.tgz
 
 # Reiniciar n8n
 ```
@@ -29,8 +29,8 @@ npm install /ruta/completa/al/n8n-nodes-in-memory-kv-1.0.0.tgz
 
 ```bash
 # Copiar el nodo compilado al directorio de nodos personalizados de n8n
-cp dist/nodes/InMemoryKV/InMemoryKV.node.js /home/n8n/custom-nodes/
-cp dist/nodes/InMemoryKV/inmemory.svg /home/n8n/custom-nodes/
+cp dist/nodes/MemoryState/MemoryState.node.js /home/n8n/custom-nodes/
+cp dist/nodes/MemoryState/memorystate.svg /home/n8n/custom-nodes/
 
 # Reiniciar n8n
 ```
@@ -38,7 +38,7 @@ cp dist/nodes/InMemoryKV/inmemory.svg /home/n8n/custom-nodes/
 ### Opción 3: Instalación directa (si está soportada)
 
 ```bash
-n8n install /ruta/al/proyecto/in-memory-kv-node
+n8n install /ruta/al/proyecto/memory-state-node
 ```
 
 ## Uso
@@ -215,12 +215,12 @@ Lista todas las claves almacenadas con capacidad de filtrado opcional y recupera
 ```
 HTTP Request Trigger 
   ↓
-In-Memory KV (Set)
+Memory State (Set)
   - Action: Set
   - Key: "session:{{$json.sessionId}}"
   - Value: {"userId": "{{$json.userId}}", "timestamp": "{{$now}}"}
   ↓
-In-Memory KV (Get)
+Memory State (Get)
   - Action: Get
   - Key: "session:{{$json.sessionId}}"
   ↓
@@ -261,13 +261,13 @@ El nodo utiliza `async-mutex` para garantizar que las operaciones concurrentes s
 ├── src/
 │   └── MemoryStore.ts          # Implementación del almacén en memoria
 ├── nodes/
-│   └── InMemoryKV/
-│       ├── InMemoryKV.node.ts  # Implementación del nodo n8n
-│       └── inmemory.svg        # Icono del nodo
+│   └── MemoryState/
+│       ├── MemoryState.node.ts  # Implementación del nodo n8n
+│       └── memorystate.svg      # Icono del nodo
 ├── tests/
-│   ├── MemoryStore.test.ts     # Tests del almacén
-│   └── InMemoryKV.node.test.ts # Tests del nodo
-└── dist/                       # Archivos compilados
+│   ├── MemoryStore.test.ts      # Tests del almacén
+│   └── MemoryState.node.test.ts # Tests del nodo
+└── dist/                        # Archivos compilados
 ```
 
 ### Scripts disponibles

@@ -11,11 +11,11 @@ jest.mock('n8n-workflow', () => ({
   }
 }));
 
-import { InMemoryKv } from '../nodes/InMemoryKV/InMemoryKv.node';
+import { MemoryState } from '../nodes/MemoryState/MemoryState.node';
 import { memoryStore } from '../src/MemoryStore';
 
-describe('InMemoryKV Node', () => {
-  let nodeInstance: InMemoryKv;
+describe('MemoryState Node', () => {
+  let nodeInstance: MemoryState;
   let mockThis: any;
 
   beforeEach(async () => {
@@ -25,13 +25,13 @@ describe('InMemoryKV Node', () => {
     // Reset mocks
     jest.clearAllMocks();
 
-    nodeInstance = new InMemoryKv();
+    nodeInstance = new MemoryState();
 
     // Mock the execution context
     mockThis = {
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNodeParameter: jest.fn(),
-      getNode: jest.fn().mockReturnValue({ name: 'InMemoryKV' }),
+      getNode: jest.fn().mockReturnValue({ name: 'MemoryState' }),
     };
   });
 
@@ -39,8 +39,8 @@ describe('InMemoryKV Node', () => {
     it('should have correct node description', () => {
       const description = nodeInstance.description;
 
-      expect(description.displayName).toBe('In-Memory KV');
-      expect(description.name).toBe('inMemoryKv');
+      expect(description.displayName).toBe('Memory State');
+      expect(description.name).toBe('memoryState');
       expect(description.group).toContain('transform');
       expect(description.version).toBe(1);
       expect(description.inputs).toEqual(['main']);
