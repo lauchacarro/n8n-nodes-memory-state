@@ -12,34 +12,8 @@ Un nodo personalizado para n8n que proporciona funcionalidad de almacenamiento d
 
 ## Instalación
 
-### Opción 1: Instalar desde paquete empaquetado
+Seguí la [guía de instalación](https://docs.n8n.io/integrations/community-nodes/installation/) en la documentación de nodos de comunidad de n8n.
 
-```bash
-# Empaquetar el nodo
-npm pack
-
-# Instalar en tu instalación de n8n
-cd /ruta/a/tu/instalacion/n8n
-npm install /ruta/completa/al/n8n-nodes-memory-state-1.0.0.tgz
-
-# Reiniciar n8n
-```
-
-### Opción 2: Copiar archivos compilados
-
-```bash
-# Copiar el nodo compilado al directorio de nodos personalizados de n8n
-cp dist/nodes/MemoryState/MemoryState.node.js /home/n8n/custom-nodes/
-cp dist/nodes/MemoryState/memorystate.svg /home/n8n/custom-nodes/
-
-# Reiniciar n8n
-```
-
-### Opción 3: Instalación directa (si está soportada)
-
-```bash
-n8n install /ruta/al/proyecto/memory-state-node
-```
 
 ## Uso
 
@@ -209,23 +183,6 @@ Lista todas las claves almacenadas con capacidad de filtrado opcional y recupera
 - `^session:.*`: Claves que empiecen con "session:"
 - `.*:config$`: Claves que terminen con ":config"
 - `user_\d+`: Claves que contengan "user_" seguido de números
-
-### Ejemplo de workflow
-
-```
-HTTP Request Trigger 
-  ↓
-Memory State (Set)
-  - Action: Set
-  - Key: "session:{{$json.sessionId}}"
-  - Value: {"userId": "{{$json.userId}}", "timestamp": "{{$now}}"}
-  ↓
-Memory State (Get)
-  - Action: Get
-  - Key: "session:{{$json.sessionId}}"
-  ↓
-HTTP Response
-```
 
 ## Validaciones y restricciones
 
