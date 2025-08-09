@@ -301,6 +301,35 @@ Los tests incluyen:
 - Verifica que tienes Node.js 20.15+ instalado
 - Ejecuta `npm run build` antes de los tests
 
+## CI/CD
+
+Este proyecto utiliza GitHub Actions para automatización CI/CD:
+
+- ✅ **Tests automáticos** en cada PR y push a main
+- ✅ **Linting automático** para mantener calidad de código
+- ✅ **Build automático** para verificar compilación
+- ✅ **Security audit** para detectar vulnerabilidades
+- ✅ **Publicación automática** a NPM cuando cambia la versión
+- ✅ **Releases automáticos** en GitHub con tags
+
+### Para desarrolladores
+
+```bash
+# Crear nueva versión patch (1.0.0 → 1.0.1)
+npm run version:patch
+
+# Crear nueva versión minor (1.0.0 → 1.1.0)
+npm run version:minor
+
+# Crear nueva versión major (1.0.0 → 2.0.0)
+npm run version:major
+
+# Ejecutar pipeline completo localmente
+npm run ci
+```
+
+Ver [.github/DEPLOYMENT.md](.github/DEPLOYMENT.md) para instrucciones de configuración.
+
 ## Licencia
 
 MIT License - Ver archivo LICENSE.md para detalles.

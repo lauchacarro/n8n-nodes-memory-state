@@ -1,0 +1,178 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: '20.15'
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run linting
+        run: npm run lint
+        
+      - name: Run tests
+        run: npm test
+        
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: coverage/
+          retention-days: 7
+
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build package
+        run: npm run build
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
+
+  publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build package
+        run: npm run build
+        
+      - name: Check if version changed
+        id: version-check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          NPM_VERSION=$(npm view n8n-nodes-memory-state version 2>/dev/null || echo "0.0.0")
+          echo "Package version: $PACKAGE_VERSION"
+          echo "NPM version: $NPM_VERSION"
+          if [ "$PACKAGE_VERSION" != "$NPM_VERSION" ]; then
+            echo "version-changed=true" >> $GITHUB_OUTPUT
+            echo "new-version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "version-changed=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Create Git tag
+        if: steps.version-check.outputs.version-changed == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "v${{ steps.version-check.outputs.new-version }}" -m "Release v${{ steps.version-check.outputs.new-version }}"
+          git push origin "v${{ steps.version-check.outputs.new-version }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Publish to NPM
+        if: steps.version-check.outputs.version-changed == 'true'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Create GitHub Release
+        if: steps.version-check.outputs.version-changed == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version-check.outputs.new-version }}
+          release_name: Release v${{ steps.version-check.outputs.new-version }}
+          body: |
+            ## Changes in v${{ steps.version-check.outputs.new-version }}
+            
+            Memory State Node for n8n - Release v${{ steps.version-check.outputs.new-version }}
+            
+            ### Features
+            - Set: Store JSON objects with string keys
+            - Get: Retrieve values by key (returns null if not found)
+            - Get with Default: Auto-store default values when key doesn't exist
+            - Delete: Remove keys from memory
+            - Keys: List all keys with optional regex filtering and value retrieval
+            
+            ### Installation
+            ```bash
+            npm install n8n-nodes-memory-state
+            ```
+            
+            See the [README](https://github.com/${{ github.repository }}/blob/main/README.md) for full documentation.
+          draft: false
+          prerelease: false
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+        
+      - name: Check for vulnerabilities
+        run: npm audit --json | jq '.vulnerabilities | length'
